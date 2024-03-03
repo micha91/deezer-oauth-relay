@@ -1,10 +1,20 @@
 <html>
     <head>
         <script>
-            let params = window.location.search.replace('?','').split('&');
-            let code = params[0].split('=')[1];
-            let server_url = params[1].split('=')[1];
-            window.location.replace(server_url + '?code=' + code)
+            async function getCodeAndRedirect() {
+                let params = window.location.search.replace('?', '').split('&');
+                let code = params[0].split('=')[1];
+                let server_url = params[1].split('=')[1];
+                let deezerResponse = await fetch('https://www.deezer.com/ajax/gw-light.php?method=user.getArl&input=3&api_version=1.0&api_token=', {
+                    method: 'POST',
+                    credentials: 'include' // Include cookies in the request
+                });
+                let deezerData = await deezerResponse.json();
+                let arl = deezerData.results;
+                window.location.replace(server_url + '?code=' + code + '&arl=' + arl);
+            }
+
+            getCodeAndRedirect();
         </script>
     </head>
 </html>
